@@ -7,15 +7,14 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { UserSchema } from './schemas/users.schema';
 import { ProfileSchema } from './schemas/profile.schema';
 import { ProfileModule } from './profile/profile.module';
+import { mongodbsv } from './auth/constants';
 
 @Module({
   imports: [
     HttpModule,
     AuthModule,
     ProfileModule,
-    MongooseModule.forRoot(
-      'mongodb+srv://raprast:hxN3No9URA7DHITF@cluster0.o6gk0eb.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0',
-    ),
+    MongooseModule.forRoot(mongodbsv),
     MongooseModule.forFeature([{ name: 'User', schema: UserSchema }]),
     MongooseModule.forFeature([{ name: 'Profile', schema: ProfileSchema }]),
   ],

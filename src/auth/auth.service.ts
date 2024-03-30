@@ -25,18 +25,16 @@ export class AuthService {
       })
       .exec();
     if (existingUser == null) {
-      throw new UnauthorizedException('Username, email or password is invalid');
+      throw new UnauthorizedException('User not found');
     }
-    // Check if the provided password matches the stored hash
     const isPasswordValid = await bcrypt.compare(
       password,
       existingUser.password,
     );
     if (!isPasswordValid) {
-      throw new UnauthorizedException('Username, email or password is invalid');
+      throw new UnauthorizedException('Incorrect password');
     }
 
-    // Generate JWT token
     const payload = {
       id: existingUser._id,
       username: existingUser.username,
@@ -44,7 +42,7 @@ export class AuthService {
     };
 
     return {
-      message: 'User has been logged in successfully',
+      message: 'User has been logged in',
       access_token: this.jwtService.sign(payload),
     };
   }
@@ -52,19 +50,15 @@ export class AuthService {
   async register(createUserDto: RegisterDto): Promise<any> {
     const { username, email, password } = createUserDto;
 
-    // Check if the username or email already exists
     const existingUser = await this.userModel
       .findOne({ $or: [{ username }, { email }] })
       .exec();
     if (existingUser) {
-      return {
-        message: 'User already exists',
-      };
+      throw new ConflictException('User already exists');
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create and save the new user with MongoDB-generated userId
     const newUser = new this.userModel({
       ...createUserDto,
       password: hashedPassword,

@@ -1,7 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/mongoose';
-import { HttpStatusCode } from 'axios';
 import { Model } from 'mongoose';
 import { CreateProfileDto } from 'src/dto/create-profile.dto';
 import { UpdateProfileDto } from 'src/dto/update-profile.dto';
@@ -22,11 +25,11 @@ export class ProfileService {
     token: string,
   ): Promise<any> {
     const user = await this.jwtService.decode(token);
-    if (this.isTokenExpired(user.exp)) {
-      return {
-        message: 'Session has expired please log in again',
-        statusCode: HttpStatusCode.Unauthorized,
-      };
+    const isExpired = await this.isTokenExpired(user.exp);
+    if (isExpired) {
+      throw new UnauthorizedException(
+        'Session has expired please log in again',
+      );
     }
     const existingProfile = await this.profileModel
       .findOne({
@@ -63,11 +66,11 @@ export class ProfileService {
     token: string,
   ): Promise<any> {
     const user = await this.jwtService.decode(token);
-    if (this.isTokenExpired(user.exp)) {
-      return {
-        message: 'Session has expired please log in again',
-        statusCode: HttpStatusCode.Unauthorized,
-      };
+    const isExpired = await this.isTokenExpired(user.exp);
+    if (isExpired) {
+      throw new UnauthorizedException(
+        'Session has expired please log in again',
+      );
     }
     const existingProfile = await this.profileModel
       .findOne({
@@ -75,11 +78,7 @@ export class ProfileService {
       })
       .exec();
     if (existingProfile == null) {
-      return {
-        message: 'No existing user',
-        status: 'Bad Request',
-        statusCode: HttpStatusCode.BadRequest,
-      };
+      throw new BadRequestException('No existing user');
     }
     await existingProfile.updateOne({
       userId: existingProfile.userId,
@@ -106,11 +105,11 @@ export class ProfileService {
 
   async getProfile(token: string): Promise<any> {
     const user = await this.jwtService.decode(token);
-    if (this.isTokenExpired(user.exp)) {
-      return {
-        message: 'Session has expired please log in again',
-        statusCode: HttpStatusCode.Unauthorized,
-      };
+    const isExpired = await this.isTokenExpired(user.exp);
+    if (isExpired) {
+      throw new UnauthorizedException(
+        'Session has expired please log in again',
+      );
     }
     const existingProfile = await this.profileModel
       .findOne({
@@ -118,11 +117,7 @@ export class ProfileService {
       })
       .exec();
     if (existingProfile == null) {
-      return {
-        message: 'No existing user',
-        status: 'Bad Request',
-        statusCode: HttpStatusCode.BadRequest,
-      };
+      throw new BadRequestException('No existing user');
     }
     return {
       message: 'Profile has been found successfully',
