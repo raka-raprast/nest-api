@@ -6,6 +6,8 @@ import { JwtStrategy } from 'src/auth/jwt.strategy';
 import { ProfileSchema } from 'src/schemas/profile.schema';
 import { ProfileService } from './profile.service';
 import { ProfileController } from './profile.controller';
+import { MulterModule } from '@nestjs/platform-express';
+import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 
 @Module({
   imports: [
@@ -14,9 +16,12 @@ import { ProfileController } from './profile.controller';
       secret: jwtConstants.secret,
       signOptions: { expiresIn: '1h' },
     }),
+    MulterModule.register({
+      dest: './uploads',
+    }),
   ],
   controllers: [ProfileController],
-  providers: [ProfileService, JwtStrategy],
+  providers: [ProfileService, JwtStrategy, CloudinaryService],
   exports: [ProfileService],
 })
 export class ProfileModule {}

@@ -50,6 +50,7 @@ export class ProfileService {
     return {
       message: 'Profile has been created successfully',
       data: {
+        imageUrl: newProfile.imageUrl,
         email: user.email,
         username: user.username,
         name: newProfile.name,
@@ -64,6 +65,7 @@ export class ProfileService {
   async updateProfile(
     updateProfileDto: UpdateProfileDto,
     token: string,
+    imgUrl: string,
   ): Promise<any> {
     const user = await this.jwtService.decode(token);
     const isExpired = await this.isTokenExpired(user.exp);
@@ -81,6 +83,7 @@ export class ProfileService {
       throw new BadRequestException('No existing user');
     }
     await existingProfile.updateOne({
+      imageUrl: imgUrl ?? existingProfile.imageUrl,
       userId: existingProfile.userId,
       name: updateProfileDto.name ?? existingProfile.name,
       birthday: updateProfileDto.birthday ?? existingProfile.birthday,
@@ -91,7 +94,7 @@ export class ProfileService {
     return {
       message: 'Profile has been updated successfully',
       data: {
-        email: user.email,
+        email: imgUrl ?? user.email,
         username: user.username,
         userId: existingProfile.userId,
         name: updateProfileDto.name ?? existingProfile.name,

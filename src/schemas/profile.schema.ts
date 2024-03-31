@@ -9,6 +9,9 @@ export class Profile {
   userId: string;
 
   @Prop()
+  imageUrl: string | null;
+
+  @Prop()
   name: string;
 
   @Prop()

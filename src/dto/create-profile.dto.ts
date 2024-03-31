@@ -6,6 +6,10 @@ export class CreateProfileDto {
   @ApiProperty({
     example: 'John Doe',
   })
+  readonly imageUrl: string;
+  @ApiProperty({
+    example: 'John Doe',
+  })
   @IsString()
   readonly name: string;
   @ApiProperty({
