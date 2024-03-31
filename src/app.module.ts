@@ -8,6 +8,7 @@ import { UserSchema } from './schemas/users.schema';
 import { ProfileSchema } from './schemas/profile.schema';
 import { ProfileModule } from './profile/profile.module';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
+import { ChatModule } from './chat/chat.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { CloudinaryModule } from './cloudinary/cloudinary.module';
     MongooseModule.forFeature([{ name: 'User', schema: UserSchema }]),
     MongooseModule.forFeature([{ name: 'Profile', schema: ProfileSchema }]),
     CloudinaryModule,
+    ChatModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -23,8 +23,8 @@ import {
 } from '@nestjs/swagger';
 import { HttpStatusCode } from 'axios';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
-import { CreateProfileDto } from 'src/dto/create-profile.dto';
-import { UpdateProfileDto } from 'src/dto/update-profile.dto';
+import { CreateProfileDto } from 'src/profile/dto/create-profile.dto';
+import { UpdateProfileDto } from 'src/profile/dto/update-profile.dto';
 import { ProfileService } from './profile.service';
 
 @Controller()
