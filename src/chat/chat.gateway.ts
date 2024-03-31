@@ -1,20 +1,18 @@
-import {
-  WebSocketGateway,
-  SubscribeMessage,
-  MessageBody,
-  WebSocketServer,
-  ConnectedSocket,
-} from '@nestjs/websockets';
-import { Server } from 'https';
-import { Socket } from 'socket.io';
-import { ChatService } from './chat.service';
-import { CreateMessageDto } from './dto/create-message.dto';
 import { JwtService } from '@nestjs/jwt';
+import { BadRequestException, UnauthorizedException } from '@nestjs/common';
+import {
+  ConnectedSocket,
+  MessageBody,
+  SubscribeMessage,
+  WebSocketGateway,
+  WebSocketServer,
+} from '@nestjs/websockets';
+import { Server, Socket } from 'socket.io';
+import { ChatService } from './chat.service';
 import { ProfileService } from 'src/profile/profile.service';
-import { UnauthorizedException } from '@nestjs/common/exceptions';
 import { IProfile } from 'src/interface/profile.interface';
-import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { InjectModel } from '@nestjs/mongoose';
 
 @WebSocketGateway({
   cors: {
@@ -22,54 +20,64 @@ import { Model } from 'mongoose';
   },
 })
 export class ChatGateway {
-  @WebSocketServer()
-  server: Server;
   constructor(
-    private readonly chatService: ChatService,
+    private chatService: ChatService,
     private jwtService: JwtService,
     private profileService: ProfileService,
     @InjectModel('Profile') private profileModel: Model<IProfile>,
   ) {}
 
-  @SubscribeMessage('createMessage')
-  async create(
-    @MessageBody() createMessageDto: CreateMessageDto,
-    @ConnectedSocket() client: Socket,
-  ) {
-    const message = await this.chatService.create(createMessageDto, client.id);
+  @WebSocketServer()
+  server: Server;
 
-    this.server.emit('message', message);
-
-    return message;
-  }
-
-  @SubscribeMessage('findAllMessages')
-  findAll() {
-    return this.chatService.findAll();
-  }
-
-  @SubscribeMessage('join')
-  async joinRoom(
-    @MessageBody('name') token: string,
-    @ConnectedSocket() client: Socket,
-  ) {
+  async getUserFromSocket(token: string) {
     const user = await this.jwtService.decode(token);
-    const isExpired = await this.profileService.isTokenExpired(user.exp);
+    const isExpired = this.profileService.isTokenExpired(user.exp);
     if (isExpired) {
       throw new UnauthorizedException(
         'Session has expired please log in again',
       );
     }
-    return this.chatService.identify(user.username, client.id);
+    if (!user) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+    const existingProfile = await this.profileModel
+      .findOne({
+        $or: [{ userId: user.id }],
+      })
+      .exec();
+    if (!existingProfile) {
+      throw new BadRequestException('Something went wrong please log in again');
+    }
+    return {
+      id: user.id,
+      email: user.email,
+      username: user.username,
+      name: existingProfile.name,
+      birthday: existingProfile.birthday,
+      height: existingProfile.height,
+      weight: existingProfile.weight,
+      interests: existingProfile.interests,
+    };
   }
 
-  @SubscribeMessage('typing')
-  async typing(
-    @MessageBody('isTyping') isTyping: boolean,
+  @SubscribeMessage('send_message')
+  async handleMessages(
     @ConnectedSocket() client: Socket,
+    @MessageBody() payload: any,
   ) {
-    const name = await this.chatService.getClientName(client.id);
+    const { id, message, token } = payload;
+    const user = await this.getUserFromSocket(token);
+    await this.chatService.find(id);
+    await this.chatService.createMessage(id, message, user.id);
 
-    client.broadcast.emit('typing', { name, isTyping });
+    return message;
+  }
+
+  broadcastMessages(id: string, newMessage: any) {
+    console.log(id);
+    this.server.sockets.emit(`chatrooms/${id}`, {
+      message: newMessage,
+    });
   }
 }
