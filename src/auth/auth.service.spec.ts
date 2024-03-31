@@ -4,8 +4,8 @@ import { JwtService } from '@nestjs/jwt';
 import { ConflictException, UnauthorizedException } from '@nestjs/common';
 import * as bcrypt from 'bcryptjs';
 import { AuthService } from './auth.service';
-import { RegisterDto } from '../dto/register.dto';
-import { LoginDto } from '../dto/login.dto';
+import { RegisterDto } from './dto/register.dto';
+import { LoginDto } from './dto/login.dto';
 
 // Mock User model
 const mockUserModel = {

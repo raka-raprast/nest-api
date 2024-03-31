@@ -6,8 +6,8 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { CreateProfileDto } from 'src/dto/create-profile.dto';
-import { UpdateProfileDto } from 'src/dto/update-profile.dto';
+import { CreateProfileDto } from 'src/profile/dto/create-profile.dto';
+import { UpdateProfileDto } from 'src/profile/dto/update-profile.dto';
 import { IProfile } from 'src/interface/profile.interface';
 export type Profile = any;
 @Injectable()

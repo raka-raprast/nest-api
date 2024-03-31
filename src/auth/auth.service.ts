@@ -4,8 +4,8 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { RegisterDto } from 'src/dto/register.dto';
-import { LoginDto } from 'src/dto/login.dto';
+import { RegisterDto } from 'src/auth/dto/register.dto';
+import { LoginDto } from 'src/auth/dto/login.dto';
 import { IUser } from 'src/interface/user.interface';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
