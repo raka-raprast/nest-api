@@ -115,7 +115,6 @@ export class ProfileService {
         $or: [{ userId: user.id }],
       })
       .exec();
-    console.log(refetchedProfile);
     return {
       message: 'Profile has been updated successfully',
       data: {
