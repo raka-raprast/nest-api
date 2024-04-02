@@ -16,7 +16,8 @@ import { ChatModule } from './chat/chat.module';
     AuthModule,
     ProfileModule,
     MongooseModule.forRoot(
-      'mongodb+srv://raprast:hxN3No9URA7DHITF@cluster0.o6gk0eb.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0',
+      // 'mongodb+srv://raprast:hxN3No9URA7DHITF@cluster0.o6gk0eb.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0',
+      'mongodb://0.0.0.0:2717/youapp',
     ),
     MongooseModule.forFeature([{ name: 'User', schema: UserSchema }]),
     MongooseModule.forFeature([{ name: 'Profile', schema: ProfileSchema }]),

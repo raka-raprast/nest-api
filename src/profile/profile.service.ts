@@ -1,7 +1,7 @@
 import {
   BadRequestException,
   Injectable,
-  UnauthorizedException,
+  // UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/mongoose';
@@ -25,12 +25,12 @@ export class ProfileService {
     token: string,
   ): Promise<any> {
     const user = await this.jwtService.decode(token);
-    const isExpired = await this.isTokenExpired(user.exp);
-    if (isExpired) {
-      throw new UnauthorizedException(
-        'Session has expired please log in again',
-      );
-    }
+    // const isExpired = await this.isTokenExpired(user.exp);
+    // if (isExpired) {
+    //   throw new UnauthorizedException(
+    //     'Session has expired please log in again',
+    //   );
+    // }
     const existingProfile = await this.profileModel
       .findOne({
         $or: [{ userId: user.id }],
@@ -39,7 +39,19 @@ export class ProfileService {
     if (existingProfile) {
       return {
         message: 'Profile has been created successfully',
-        data: existingProfile,
+        data: {
+          imageUrl: existingProfile.imageUrl,
+          email: user.email,
+          username: user.username,
+          name: existingProfile.name,
+          birthday: existingProfile.birthday,
+          gender: existingProfile.gender,
+          horoscope: existingProfile.horoscope,
+          zodiac: existingProfile.zodiac,
+          height: existingProfile.height,
+          weight: existingProfile.weight,
+          interests: existingProfile.interests,
+        },
       };
     }
     const newProfile = await new this.profileModel({
@@ -54,7 +66,10 @@ export class ProfileService {
         email: user.email,
         username: user.username,
         name: newProfile.name,
+        gender: newProfile.gender,
         birthday: newProfile.birthday,
+        horoscope: newProfile.horoscope,
+        zodiac: newProfile.zodiac,
         height: newProfile.height,
         weight: newProfile.weight,
         interests: newProfile.interests,
@@ -68,12 +83,12 @@ export class ProfileService {
     imgUrl: string,
   ): Promise<any> {
     const user = await this.jwtService.decode(token);
-    const isExpired = await this.isTokenExpired(user.exp);
-    if (isExpired) {
-      throw new UnauthorizedException(
-        'Session has expired please log in again',
-      );
-    }
+    // const isExpired = await this.isTokenExpired(user.exp);
+    // if (isExpired) {
+    //   throw new UnauthorizedException(
+    //     'Session has expired please log in again',
+    //   );
+    // }
     const existingProfile = await this.profileModel
       .findOne({
         $or: [{ userId: user.id }],
@@ -83,37 +98,51 @@ export class ProfileService {
       throw new BadRequestException('No existing user');
     }
     await existingProfile.updateOne({
-      imageUrl: imgUrl ?? existingProfile.imageUrl,
+      imageUrl:
+        imgUrl == null || imgUrl == '' ? existingProfile.imageUrl : imgUrl,
       userId: existingProfile.userId,
       name: updateProfileDto.name ?? existingProfile.name,
       birthday: updateProfileDto.birthday ?? existingProfile.birthday,
+      gender: updateProfileDto.gender ?? existingProfile.gender,
+      horoscope: updateProfileDto.horoscope ?? existingProfile.horoscope,
+      zodiac: updateProfileDto.zodiac ?? existingProfile.zodiac,
       height: updateProfileDto.height ?? existingProfile.height,
       weight: updateProfileDto.weight ?? existingProfile.weight,
       interests: updateProfileDto.interests ?? existingProfile.interests,
     });
+    const refetchedProfile = await this.profileModel
+      .findOne({
+        $or: [{ userId: user.id }],
+      })
+      .exec();
+    console.log(refetchedProfile);
     return {
       message: 'Profile has been updated successfully',
       data: {
-        email: imgUrl ?? user.email,
+        imageUrl: refetchedProfile.imageUrl,
+        email: user.email,
         username: user.username,
-        userId: existingProfile.userId,
-        name: updateProfileDto.name ?? existingProfile.name,
-        birthday: updateProfileDto.birthday ?? existingProfile.birthday,
-        height: updateProfileDto.height ?? existingProfile.height,
-        weight: updateProfileDto.weight ?? existingProfile.weight,
-        interests: updateProfileDto.interests ?? existingProfile.interests,
+        userId: refetchedProfile.userId,
+        name: refetchedProfile.name,
+        gender: refetchedProfile.gender,
+        birthday: refetchedProfile.birthday,
+        horoscope: refetchedProfile.horoscope,
+        zodiac: refetchedProfile.zodiac,
+        height: refetchedProfile.height,
+        weight: refetchedProfile.weight,
+        interests: refetchedProfile.interests,
       },
     };
   }
 
   async getProfile(token: string): Promise<any> {
     const user = await this.jwtService.decode(token);
-    const isExpired = await this.isTokenExpired(user.exp);
-    if (isExpired) {
-      throw new UnauthorizedException(
-        'Session has expired please log in again',
-      );
-    }
+    // const isExpired = await this.isTokenExpired(user.exp);
+    // if (isExpired) {
+    //   throw new UnauthorizedException(
+    //     'Session has expired please log in again',
+    //   );
+    // }
     const existingProfile = await this.profileModel
       .findOne({
         $or: [{ userId: user.id }],
@@ -125,10 +154,14 @@ export class ProfileService {
     return {
       message: 'Profile has been found successfully',
       data: {
+        imageUrl: existingProfile.imageUrl,
         email: user.email,
         username: user.username,
         name: existingProfile.name,
         birthday: existingProfile.birthday,
+        gender: existingProfile.gender,
+        horoscope: existingProfile.horoscope,
+        zodiac: existingProfile.zodiac,
         height: existingProfile.height,
         weight: existingProfile.weight,
         interests: existingProfile.interests,

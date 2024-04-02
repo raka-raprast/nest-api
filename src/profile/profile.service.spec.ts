@@ -58,9 +58,12 @@ describe('ProfileService', () => {
             userId: '',
             name: '',
             birthday: '',
+            gender: '',
             height: 0,
             weight: 0,
             interests: [],
+            horoscope: '',
+            zodiac: '',
           },
           'token',
         ),
@@ -80,12 +83,14 @@ describe('ProfileService', () => {
       await expect(
         service.updateProfile(
           {
-            imageUrl: '',
+            gender: '',
             name: '',
             birthday: '',
             height: 0,
             weight: 0,
             interests: [''],
+            horoscope: '',
+            zodiac: '',
           },
           'token',
           '',

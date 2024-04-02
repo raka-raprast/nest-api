@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsArray, IsNumber, IsString, Min } from 'class-validator';
+import { IsArray, IsNumber, IsOptional, IsString, Min } from 'class-validator';
 
 export class CreateProfileDto {
   readonly userId: string;
@@ -18,6 +18,21 @@ export class CreateProfileDto {
   @IsString()
   readonly birthday: string;
   @ApiProperty({
+    example: 'Male',
+  })
+  @IsString()
+  readonly gender: string;
+  @ApiProperty({
+    example: 'Aries',
+  })
+  @IsString()
+  readonly horoscope: string;
+  @ApiProperty({
+    example: 'Boar',
+  })
+  @IsString()
+  readonly zodiac: string;
+  @ApiProperty({
     example: 185,
   })
   @IsNumber()
@@ -32,6 +47,7 @@ export class CreateProfileDto {
   @ApiProperty({
     example: ['string'],
   })
+  @IsOptional()
   @IsArray()
   @IsString({ each: true })
   readonly interests: string[];

@@ -21,13 +21,14 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { HttpStatusCode } from 'axios';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 import { CreateProfileDto } from 'src/profile/dto/create-profile.dto';
 import { UpdateProfileDto } from 'src/profile/dto/update-profile.dto';
 import { ProfileService } from './profile.service';
+import { CacheInterceptor } from '@nestjs/cache-manager';
 
 @Controller()
+@UseInterceptors(CacheInterceptor)
 export class ProfileController {
   constructor(
     private profileService: ProfileService,
@@ -59,6 +60,7 @@ export class ProfileController {
     @Body() createProfileDto: CreateProfileDto,
     @Headers() header,
   ) {
+    console.log('Created');
     if (header['x-access-token'] == null) {
       throw new UnauthorizedException('No token provided.');
     }
@@ -84,11 +86,7 @@ export class ProfileController {
     @Headers() header,
   ) {
     if (header['x-access-token'] == null) {
-      return {
-        auth: 'false',
-        message: 'No token provided.',
-        statusCode: HttpStatusCode.Unauthorized,
-      };
+      throw new UnauthorizedException('No token provided.');
     }
     return this.profileService.updateProfile(
       updateProfileDto,

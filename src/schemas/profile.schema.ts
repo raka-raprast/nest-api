@@ -15,7 +15,16 @@ export class Profile {
   name: string;
 
   @Prop()
+  gender: string;
+
+  @Prop()
   birthday: string;
+
+  @Prop()
+  horoscope: string;
+
+  @Prop()
+  zodiac: string;
 
   @Prop()
   height: number;

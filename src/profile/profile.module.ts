@@ -8,6 +8,7 @@ import { ProfileService } from './profile.service';
 import { ProfileController } from './profile.controller';
 import { MulterModule } from '@nestjs/platform-express';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
+import { CacheModule } from '@nestjs/cache-manager';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
     MulterModule.register({
       dest: './uploads',
     }),
+    CacheModule.register(),
   ],
   controllers: [ProfileController],
   providers: [ProfileService, JwtStrategy, CloudinaryService],
