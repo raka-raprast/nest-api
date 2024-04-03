@@ -15,6 +15,7 @@ export class AuthController {
   @ApiTags('auth')
   @HttpCode(200)
   async login(@Body() loginUserDto: LoginDto) {
+    console.log('login trigger');
     return this.authService.login(loginUserDto);
   }
 

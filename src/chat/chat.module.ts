@@ -3,7 +3,6 @@ import { ChatService } from './chat.service';
 import { ChatGateway } from './chat.gateway';
 import { JwtStrategy } from 'src/auth/jwt.strategy';
 import { JwtModule } from '@nestjs/jwt';
-import { jwtConstants } from 'src/auth/constants';
 import { ProfileService } from 'src/profile/profile.service';
 import { ProfileSchema } from 'src/schemas/profile.schema';
 import { MongooseModule } from '@nestjs/mongoose';
@@ -15,7 +14,7 @@ import { ChatController } from './chat.controller';
     MongooseModule.forFeature([{ name: 'Profile', schema: ProfileSchema }]),
     MongooseModule.forFeature([{ name: 'Messages', schema: MessageSchema }]),
     JwtModule.register({
-      secret: jwtConstants.secret,
+      secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: '1h' },
     }),
   ],

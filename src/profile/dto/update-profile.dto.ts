@@ -2,10 +2,6 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class UpdateProfileDto {
   @ApiProperty({
-    example: 'https://example.com/imageurl',
-  })
-  readonly imageUrl: string;
-  @ApiProperty({
     example: 'John Doe',
   })
   readonly name: string;
@@ -13,6 +9,18 @@ export class UpdateProfileDto {
     example: '01 01 2001',
   })
   readonly birthday: string;
+  @ApiProperty({
+    example: 'Male',
+  })
+  readonly gender: string;
+  @ApiProperty({
+    example: 'Aries',
+  })
+  readonly horoscope: string;
+  @ApiProperty({
+    example: 'Boar',
+  })
+  readonly zodiac: string;
   @ApiProperty({
     example: 185,
   })
@@ -24,5 +32,5 @@ export class UpdateProfileDto {
   @ApiProperty({
     example: ['string'],
   })
-  readonly interests: [string];
+  readonly interests: string[];
 }
