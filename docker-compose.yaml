@@ -1,0 +1,31 @@
+# Docker Compose Configuration
+# visit https://docs.docker.com/compose/
+
+version: '3.8'
+services:
+  # app service for your backend
+  app:
+    container_name: backend
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    environment:
+      DATABASE_NAME: Cluster0
+      DATABASE_USER: raprast
+      DATABASE_PASS: hxN3No9URA7DHITF
+      DATABASE_URI: mongodb+srv://raprast:hxN3No9URA7DHITF@cluster0.o6gk0eb.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
+    ports:
+      - '4000:4000'
+    depends_on:
+      - database
+
+  # start the mongodb service as container
+  database:
+    image: mongo:6.0
+    container_name: mongodb
+    restart: always
+    ports:
+      - '27017:27017'
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: Cluster0
+      MONGO_INITDB_ROOT_PASSWORD: raprast

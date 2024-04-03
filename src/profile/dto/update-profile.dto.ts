@@ -2,9 +2,6 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class UpdateProfileDto {
   @ApiProperty({
-    example: 'https://example.com/imageurl',
-  })
-  @ApiProperty({
     example: 'John Doe',
   })
   readonly name: string;
